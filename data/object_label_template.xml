@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<annotation>
+  <folder>images</folder>
+  <filename>{img_name}.jpg</filename>
+  <path>images/{img_name}.jpg</path>
+  <source>
+    <database>Unknown</database>
+  </source>
+  <size>
+    <width>{img_width}</width>
+    <height>{img_height}</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>macncheese</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>{left}</xmin>
+      <ymin>{upper}</ymin>
+      <xmax>{right}</xmax>
+      <ymax>{lower}</ymax>
+    </bndbox>
+  </object>
+</annotation>

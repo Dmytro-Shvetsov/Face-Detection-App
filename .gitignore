@@ -18,3 +18,5 @@ src/server/config/certs
 src/server/lib/access_log
 
 .ipynb_checkpoints
+
+images/
