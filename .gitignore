@@ -20,3 +20,4 @@ src/server/lib/access_log
 .ipynb_checkpoints
 
 images/
+*.record
