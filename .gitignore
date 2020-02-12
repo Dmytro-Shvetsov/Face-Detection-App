@@ -21,3 +21,9 @@ src/server/lib/access_log
 
 images/
 *.record
+
+.npmrc
+node_modules/*
+dist/*
+.cache/*
+public/dist

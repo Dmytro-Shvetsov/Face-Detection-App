@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Face Filter App</title>
+    <link rel="stylesheet" href="./stylesheets/styles.css" />
+    <script src="./scripts/main.js" defer></script>
+  </head>
+  <body>
+    <header id="mainHeader">
+      <ul class="mainNavbar">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Demo</a></li>
+      </ul>
+    </header>
+
+    <div id="display" autoplay>
+      <video id="camera" autoplay></video>
+      <canvas id="canvas"></canvas>
+    </div>
+    <button id="stopButton">stop</button>
+    <script defer>
+      var v = document.getElementById("camera");
+      var c = document.getElementById("canvas");
+      var ctx = c.getContext("2d");
+      var i;
+      function draw() {
+        i = window.setInterval(function draw() {
+          ctx.beginPath();
+          ctx.rect(135, 92, 126, 34);
+          ctx.fillStyle = "yellow";
+          ctx.fill();
+          ctx.lineWidth = 7;
+          ctx.strokeStyle = "black";
+          ctx.stroke();
+        }, 20);
+      }
+
+      draw();
+      v.addEventListener(
+        "play",
+        function() {
+          draw();
+        },
+        false
+      );
+      v.addEventListener(
+        "pause",
+        function() {
+          clearInterval(i);
+        },
+        false
+      );
+      v.addEventListener(
+        "ended",
+        function() {
+          clearInterval(i);
+        },
+        false
+      );
+    </script>
+  </body>
+</html>
