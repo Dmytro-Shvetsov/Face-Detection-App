@@ -24,6 +24,5 @@ images/
 
 .npmrc
 node_modules/*
-dist/*
 .cache/*
 public/dist

@@ -55,11 +55,11 @@ export class FaceDetectionModel {
     if (!this._model) {
       throw Error("Error! FaceDetectionModel was not loaded.");
     }
-
+    console.log(tensorImages);
     const outputs = await this._model.executeAsync(tensorImages);
 
     let predictions = [outputs[0], outputs[3], outputs[4]];
-    predictions = await predictions.map(t => t.data());
+    predictions = predictions.map(t => t.data());
 
     outputs.forEach(item => item.dispose());
 

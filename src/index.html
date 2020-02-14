@@ -17,51 +17,12 @@
         <li><a href="#">Demo</a></li>
       </ul>
     </header>
-
-    <div id="display" autoplay>
-      <video id="camera" autoplay></video>
-      <canvas id="canvas"></canvas>
-    </div>
-    <button id="stopButton">stop</button>
-    <script defer>
-      var v = document.getElementById("camera");
-      var c = document.getElementById("canvas");
-      var ctx = c.getContext("2d");
-      var i;
-      function draw() {
-        i = window.setInterval(function draw() {
-          ctx.beginPath();
-          ctx.rect(135, 92, 126, 34);
-          ctx.fillStyle = "yellow";
-          ctx.fill();
-          ctx.lineWidth = 7;
-          ctx.strokeStyle = "black";
-          ctx.stroke();
-        }, 20);
-      }
-
-      draw();
-      v.addEventListener(
-        "play",
-        function() {
-          draw();
-        },
-        false
-      );
-      v.addEventListener(
-        "pause",
-        function() {
-          clearInterval(i);
-        },
-        false
-      );
-      v.addEventListener(
-        "ended",
-        function() {
-          clearInterval(i);
-        },
-        false
-      );
-    </script>
+    <main>
+      <div id="display" autoplay>
+        <video id="camera" autoplay></video>
+        <canvas id="canvas"></canvas>
+      </div>
+      <button id="stopButton">stop</button>
+    </main>
   </body>
 </html>
