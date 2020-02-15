@@ -1,20 +1,30 @@
+import * as tf from "@tensorflow/tfjs";
 import { loadGraphModel } from "@tensorflow/tfjs-converter";
-import { squeeze } from "@tensorflow/tfjs";
+import { isNumber, isTensor } from "./utils";
 
 export class FaceDetectionModel {
-  constructor() {
+  constructor(iouThreshold = 0.5, scoreThreshold = 0.5) {
+    if (!isNumber(iouThreshold)) {
+      throw TypeError("Invalid argument iouThreshold");
+    }
+    if (!isNumber(scoreThreshold)) {
+      throw TypeError("Invalid argument scoreThreshold");
+    }
+
+    this._iouThreshold = iouThreshold;
+    this._scoreThreshold = scoreThreshold;
     this._modelUrl = "/web_model/model.json";
-    this.classes = ["Face"];
+    this._classes = ["Face"];
   }
   async load() {
     if (!this._model) {
       this._model = await loadGraphModel(this._modelUrl);
     }
   }
-  async detect(tensorImages) {
+  async detect(tensorImages, maxOutputs = 6) {
     /* 
     videoElement: any video html element(video, img)
-    returns: list containing [boxes, scores, numDetections]
+    returns: list containing [boxes, scores]
 
 
     The given SavedModel SignatureDef contains the following input(s):
@@ -52,19 +62,45 @@ export class FaceDetectionModel {
           shape: (-1, -1, 2)
           name: raw_detection_scores:0
   */
+    if (!isTensor(tensorImages)) {
+      throw TypeError("Invalid argument tensorImages");
+    }
+    if (!isNumber(maxOutputs)) {
+      throw TypeError("Invalid argument maxOutputs");
+    }
     if (!this._model) {
       throw Error("Error! FaceDetectionModel was not loaded.");
     }
-    console.log(tensorImages);
-    const outputs = await this._model.executeAsync(tensorImages);
 
-    let predictions = [outputs[0], outputs[3], outputs[4]];
-    predictions = predictions.map(t => t.data());
+    let outputs = await this._model.executeAsync(tensorImages);
+    let [boxes, scores] = [outputs[0].squeeze(), outputs[3].squeeze()];
+    const {
+      selectedIndices,
+      selectedScores
+    } = await tf.image.nonMaxSuppressionWithScoreAsync(
+      boxes,
+      scores,
+      maxOutputs,
+      this._iouThreshold,
+      this._scoreThreshold
+    );
+    const selectedBoxes = tf.gather(boxes, selectedIndices);
+
+    const [boxesData, scoresData] = await Promise.all([
+      selectedBoxes.data(),
+      selectedScores.data()
+    ]);
 
     outputs.forEach(item => item.dispose());
-
-    return Promise.all(predictions);
+    boxes.dispose();
+    scores.dispose();
+    selectedIndices.dispose();
+    selectedBoxes.dispose();
+    return [boxesData, scoresData];
   }
-
-  drawBoundingBoxes(context, boxes, scores, numDetections) {}
+  dispose() {
+    if (this._model) {
+      this._model.dispose();
+    }
+  }
 }

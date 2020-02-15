@@ -2,38 +2,17 @@ import * as tf from "@tensorflow/tfjs";
 import { Webcam } from "./webcam";
 import { FaceDetectionModel } from "./models";
 
-async function detectFace(model, webcam) {
-  let imageTensor = await webcam.getFrame();
-  const [imageWidth, imageHeight] = imageTensor.shape.slice(0, 2);
-  imageTensor = tf.expandDims(imageTensor, 0);
-
+async function detectFaces(model, webcam) {
   try {
-    const [boxes, scores, numDetections] = await model.detect(imageTensor);
-    if (numDetections) {
-      webcam.clearCanvas();
-      for (let i = 0; i < numDetections[0]; i++) {
-        if (scores[i] < 0.5) {
-          continue;
-        }
-        const box = boxes.slice(i * 4, (i + 1) * 4);
-        let [ymin, xmin, ymax, xmax] = box;
-        ymin *= imageHeight;
-        xmin *= imageWidth;
-        ymax *= imageHeight;
-        xmax *= imageWidth;
-        webcam.drawRect(
-          Math.min(xmin, imageWidth),
-          Math.min(ymin, imageHeight),
-          Math.min(xmax - xmin, imageWidth),
-          Math.min(ymax - ymin, imageHeight),
-          "#c1ff4d"
-        );
-      }
-    }
+    let imageTensor = await webcam.getFrame();
+    imageTensor = tf.expandDims(imageTensor, 0);
+    const [boxes, scores] = await model.detect(imageTensor);
+    webcam.clearCanvas();
+    webcam.drawBoundingBoxes(boxes, scores);
+    imageTensor.dispose();
   } catch (err) {
     console.log(err.message);
   }
-  imageTensor.dispose();
 }
 
 async function run() {
@@ -41,15 +20,21 @@ async function run() {
   await webcam.init();
   const model = new FaceDetectionModel();
   await model.load();
-
-  // let w = tf.data.webcam(document.getElementById('vide'))
-  // let a =
-  while (true) {
-    await detectFace(model, webcam);
-  }
-  // for (let i = 0; i < 3; i++) {
-  //   await detectFace(model, webcam);
-  // }
+  const detectionInterval = 100;
+  let timerId = setTimeout(
+    async function startDetection(model, webcam) {
+      tf.engine().startScope();
+      await detectFaces(model, webcam);
+      tf.engine().endScope();
+      timerId = setTimeout(startDetection, 10, model, webcam);
+    },
+    10,
+    model,
+    webcam
+  );
+  document.getElementById("stopButton").addEventListener("click", () => {
+    clearInterval(timerId);
+  });
 }
 
 window.onload = run;
