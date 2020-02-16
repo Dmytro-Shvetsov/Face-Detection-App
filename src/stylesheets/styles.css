@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  text-align: center;
+}
+#display {
+  display: inline-block;
+  position: relative;
+  margin: auto;
+}
+
+#camera {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: -5;
+}
+
+#canvas {
+  position: absolute;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+#display,
+#camera,
+#canvas {
+  border-radius: 1.2rem;
+}

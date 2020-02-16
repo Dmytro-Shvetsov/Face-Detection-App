@@ -10,16 +10,23 @@ def xml_to_csv(path):
         tree = ET.parse(xml_file)
         root = tree.getroot()
         for member in root.findall('object'):
-            value = (root.find('filename').text,
-                     float(root.find('size')[0].text),
-                     float(root.find('size')[1].text),
-                     member[0].text,
-                     float(member[4][0].text),
-                     float(member[4][1].text),
-                     float(member[4][2].text),
-                     float(member[4][3].text)
-                     )
-            xml_list.append(value)
+            width, height = root.find('size')[0], root.find('size')[1]
+            label = member[0].text
+            prefix = [root.find('filename').text,
+                     float(width.text),
+                     float(height.text),
+                     label
+                     ]
+            for bndbox in member[4:]:
+                box_coords = [
+                    float(bndbox[0].text),
+                    float(bndbox[1].text),
+                    float(bndbox[2].text),
+                    float(bndbox[3].text)
+                    ]
+                xml_list.append(prefix + box_coords)
+
+            
     column_name = ['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax']
     xml_df = pd.DataFrame(xml_list, columns=column_name)
     return xml_df
