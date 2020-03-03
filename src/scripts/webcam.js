@@ -10,9 +10,6 @@ export class Webcam {
 
     this._initializeUiElements();
   }
-  _stop(stream) {
-    stream.getTracks().forEach(track => track.stop());
-  }
   async init() {
     await this._initNavigatorMedia();
 
@@ -41,13 +38,6 @@ export class Webcam {
     );
   }
   _initializeUiElements() {
-    document.getElementById("stopButton").addEventListener(
-      "click",
-      () => {
-        this._stop(this.video.srcObject);
-      },
-      false
-    );
     this._video.addEventListener(
       "loadeddata",
       () => {

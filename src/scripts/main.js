@@ -32,9 +32,6 @@ async function run() {
     model,
     webcam
   );
-  document.getElementById("stopButton").addEventListener("click", () => {
-    clearInterval(timerId);
-  });
 }
 
 window.onload = run;
