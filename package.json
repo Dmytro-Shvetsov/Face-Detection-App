@@ -27,7 +27,7 @@
     "@babel/core": "^7.8.4",
     "@babel/runtime": "^7.8.4",
     "@tensorflow/tfjs": "^1.5.2",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "parcel": "^1.12.4",
     "parcel-bundler": "^1.12.4"
   },
